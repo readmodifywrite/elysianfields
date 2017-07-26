@@ -1,0 +1,1 @@
+Search.setIndex({docnames:["index"],envversion:52,filenames:["index.rst"],objects:{},objnames:{},objtypes:{},terms:{index:[],modul:[],page:[],search:[]},titles:["Elysian Fields"],titleterms:{document:[],elysian:0,field:0,indic:[],tabl:[],welcom:[]}})

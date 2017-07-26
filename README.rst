@@ -1,8 +1,4 @@
 Elysian Fields
 ==============
 
-Contents
---------
-
-License Information
--------------------
+A serialization library for C structs.
