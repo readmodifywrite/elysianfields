@@ -526,7 +526,7 @@ class StructField(Field):
     def __str__(self):
         s = self._name + ":\n"
 
-        for field in self._fields.itervalues():
+        for field in self._fields.values():
             s += " " + field._name + " = " + str(field) + "\n"
 
         if len(self._fields) == 0:
@@ -551,13 +551,13 @@ class StructField(Field):
     def size(self):
         s = 0
 
-        for field in self._fields.itervalues():
+        for field in self._fields.values():
             s += field.size()
 
         return s
 
     def unpack(self, buffer):
-        for field in self._fields.itervalues():
+        for field in self._fields.values():
             field.unpack(buffer)
             buffer = buffer[field.size():]
 
@@ -566,7 +566,7 @@ class StructField(Field):
     def pack(self):
         s = ""
 
-        for field in self._fields.itervalues():
+        for field in self._fields.values():
             s += field.pack()
 
         return s
