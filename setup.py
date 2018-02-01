@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='elysianfields',
 
-    version='1.0.0',
+    version='1.0.1',
 
     packages=['elysianfields'],
 
@@ -26,6 +26,7 @@ setup(
         'License :: OSI Approved :: Apache Software License',
 
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
     ],
 
     install_requires=[]
