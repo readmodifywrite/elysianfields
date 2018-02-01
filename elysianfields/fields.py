@@ -5,6 +5,11 @@ import uuid
 import json
 import binascii
 import inspect
+try:
+    from builtins import range
+
+except ImportError:
+    from __builtin__ import range
 
 from string import printable
 from collections import OrderedDict
@@ -136,7 +141,7 @@ class Uint8Field(IntegerField):
         return struct.pack('<B', self._value)
 
 class CharField(Field):
-    def __init__(self, _value=0, **kwargs):
+    def __init__(self, _value=b'\0', **kwargs):
         super(CharField, self).__init__(_value=_value, **kwargs)
 
     def size(self):
@@ -148,7 +153,7 @@ class CharField(Field):
         return self
 
     def pack(self):
-        return struct.pack('<c', self._value)
+        return struct.pack('<c', self._value.encode('ASCII'))
 
 class Int16Field(IntegerField):
     def __init__(self, _value=0, **kwargs):
@@ -303,14 +308,14 @@ class StringField(Field):
         super(StringField, self).__init__(_value=str(_value), **kwargs)
 
     def __str__(self):
-        return self._value
+        return self._value.decode('ascii')
 
     def get_value(self):
         return self._internal_value
 
     def set_value(self, data):
         try:
-            self._internal_value = data.encode('ascii', errors='replace') # convert to ascii, unicode will break
+            self._internal_value = data.encode('ascii', errors='replace') # convert to ascii bytes, unicode will break
         except UnicodeDecodeError:
             self._internal_value = data
 
@@ -327,7 +332,7 @@ class StringField(Field):
         if self._length == 0:
             # scan to null terminator
             s = []
-            for c in buf:
+            for c in buf.decode('ascii'):
                 if c == '\0':
                     break
 
@@ -340,10 +345,10 @@ class StringField(Field):
             s.append('\0')
 
         else:
-            s = struct.unpack_from('<' + str(self.size()) + 's', buf)[0]
-
+            s = struct.unpack_from('<' + str(self.size()) + 's', buf)[0].decode('ascii')
+    
         self._value = ''.join([c for c in s if c in printable])
-
+        
         return self
 
     def pack(self):
@@ -579,7 +584,7 @@ class ArrayField(Field):
         self._fields = []
 
         if _length:
-            for i in xrange(_length):
+            for i in range(_length):
                 self._fields.append(self._field())
 
     @property
@@ -592,7 +597,7 @@ class ArrayField(Field):
 
         chunks = []
 
-        for i in xrange(n_chunks):
+        for i in range(n_chunks):
             chunks.append(array[(i * chunksize):((i + 1) * chunksize)])
 
         return chunks
@@ -662,7 +667,7 @@ class ArrayField(Field):
         return self
 
     def pack(self):
-        s = ""
+        s = b''
 
         for field in self._fields:
             s += field.pack()

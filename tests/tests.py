@@ -209,7 +209,7 @@ class FieldTests(unittest.TestCase):
         self.assertEqual(a.__str__(), test_string)
 
         packed = a.pack()
-        self.assertEqual(packed, test_string)        
+        self.assertEqual(packed, test_string.encode('ascii'))        
 
         b = StringField().unpack(packed)
         self.assertEqual(b._value, a._value) 
