@@ -148,12 +148,12 @@ class CharField(Field):
         return struct.calcsize('<c')
 
     def unpack(self, buffer):
-        self._value = struct.unpack_from('<c', buffer)[0]
+        self._value = struct.unpack_from('<c', buffer)[0].decode('ascii')
 
         return self
 
     def pack(self):
-        return struct.pack('<c', self._value.encode('ASCII'))
+        return struct.pack('<c', self._value.encode('ascii'))
 
 class Int16Field(IntegerField):
     def __init__(self, _value=0, **kwargs):
@@ -308,10 +308,14 @@ class StringField(Field):
         super(StringField, self).__init__(_value=str(_value), **kwargs)
 
     def __str__(self):
-        return self._value.decode('ascii')
+        return self._value
 
     def get_value(self):
-        return self._internal_value
+        try:
+            return self._internal_value.decode('ascii')
+
+        except AttributeError:
+            return self._internal_value
 
     def set_value(self, data):
         try:
@@ -352,7 +356,7 @@ class StringField(Field):
         return self
 
     def pack(self):
-        return struct.pack('<' + str(self.size()) + 's', self._value)
+        return struct.pack('<' + str(self.size()) + 's', self._internal_value)
 
 class String128Field(StringField):
     def __init__(self, _value="", **kwargs):
@@ -479,7 +483,7 @@ class Key128Field(RawBinField):
     _value = property(get_value, set_value)
 
     def unpack(self, buffer):
-        self._internal_value = binascii.hexlify(buffer[:16])
+        self._internal_value = binascii.hexlify(buffer[:16]).decode('ascii')
 
         return self
 
@@ -569,7 +573,7 @@ class StructField(Field):
         return self
 
     def pack(self):
-        s = ""
+        s = b''
 
         for field in self._fields.values():
             s += field.pack()
