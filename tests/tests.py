@@ -212,7 +212,15 @@ class FieldTests(unittest.TestCase):
         self.assertEqual(packed, test_string.encode('ascii'))        
 
         b = StringField().unpack(packed)
-        self.assertEqual(b._value, a._value) 
+        self.assertEqual(b._value, a._value)
+
+    def test_string_null_terminator(self):
+        a = StringField()
+        test_string = "test_string" + '\0'
+        
+        a.unpack(test_string)
+
+        self.assertEqual(a.size(), len(test_string) - 1)
 
     def test_string32(self):
         a = String32Field()

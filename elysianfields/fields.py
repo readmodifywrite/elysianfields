@@ -336,7 +336,13 @@ class StringField(Field):
         if self._length == 0:
             # scan to null terminator
             s = []
-            for c in buf.decode('ascii'):
+            
+            try:
+                decoded = buf.decode('ascii')  
+            except AttributeError:
+                decoded = buf
+
+            for c in decoded:
                 if c == '\0':
                     break
 
@@ -344,9 +350,6 @@ class StringField(Field):
 
             # set length, adding one byte for the null terminator
             self._length = len(s) + 1
-
-            # add the null terminator
-            s.append('\0')
 
         else:
             s = struct.unpack_from('<' + str(self.size()) + 's', buf)[0].decode('ascii')
