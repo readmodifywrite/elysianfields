@@ -100,7 +100,7 @@ class BooleanField(Field):
 
 class IntegerField(Field):
     def __init__(self, _value=0, **kwargs):
-        super(IntegerField, self).__init__(_value=_value, **kwargs)
+        super(IntegerField, self).__init__(_value=int(_value), **kwargs)
 
     def get_value(self):
         return self._internal_value
@@ -640,7 +640,8 @@ class ArrayField(Field):
         self._fields[key]._value = value
 
     def get_value(self):
-        return [field._value for field in self._fields]
+        # return [field._value for field in self._fields]
+        return self
 
     def set_value(self, value):
         self._fields = [self._field(_value=v) for v in value]

@@ -443,7 +443,9 @@ class FieldTests(unittest.TestCase):
         a._value = test_vals
 
         self.assertEqual(a.size(), 3)
-        self.assertEqual(a._value, test_vals)
+        self.assertEqual(a._value[0], test_vals[0])
+        self.assertEqual(a._value[1], test_vals[1])
+        self.assertEqual(a._value[2], test_vals[2])
         self.assertNotEqual(id(a._value), id(test_vals))
 
         total = 0
@@ -470,7 +472,9 @@ class FieldTests(unittest.TestCase):
         b = ArrayField(_field=Uint8Field).unpack(packed)
         self.assertEqual(b.size(), 3)
 
-        self.assertEqual(b._value, a._value)
+        self.assertEqual(b._value[0], a._value[0])
+        self.assertEqual(b._value[1], a._value[1])
+        self.assertEqual(b._value[2], a._value[2])
 
         a.append(Uint8Field(4))
         self.assertEqual(len(a), 4)
@@ -502,5 +506,70 @@ class FieldTests(unittest.TestCase):
         self.assertEqual(a.size(), 4)
         self.assertEqual(a[3], 0)
         self.assertEqual(a._value, [1,3,4,0])
+
+    def test_struct_array(self):
+        vals = {'a': [1,2,3,4]}
+
+        fields = [ArrayField(_name="a", _field=Uint8Field)]
+
+        a = StructField(_fields=fields)
+        a.a = vals['a']
+        
+        self.assertEqual(a.size(), 4)
+
+        self.assertEqual(a.a[0], vals['a'][0])
+        self.assertEqual(a.a[1], vals['a'][1])
+        self.assertEqual(a.a[2], vals['a'][2])
+        self.assertEqual(a.a[3], vals['a'][3])
+        
+        packed = a.pack()
+        self.assertEqual(len(packed), 4)   
+
+        b = StructField(_fields=fields).unpack(packed)
+        self.assertEqual(b.size(), 4)        
+
+        # these will return different objects, so they will not be equal
+        self.assertNotEqual(b._value, a._value)
+
+        self.assertEqual(b.a[0], vals['a'][0])
+        self.assertEqual(b.a[1], vals['a'][1])
+        self.assertEqual(b.a[2], vals['a'][2])
+        self.assertEqual(b.a[3], vals['a'][3])
+            
+        # try modifying internal array 
+        a.a[0] = 9
+        
+        self.assertEqual(a.a[0], 9)
+        self.assertEqual(a.a[1], vals['a'][1])
+        self.assertEqual(a.a[2], vals['a'][2])
+        self.assertEqual(a.a[3], vals['a'][3])
+        
+        packed = a.pack()
+        b = StructField(_fields=fields).unpack(packed)
+
+        self.assertEqual(b.a[0], 9)
+        self.assertEqual(b.a[1], vals['a'][1])
+        self.assertEqual(b.a[2], vals['a'][2])
+        self.assertEqual(b.a[3], vals['a'][3])
+            
+        # try conversion from string to target type
+        a.a[0] = '8'    
+        self.assertEqual(a.a[0], 8)
+
+        # try the whole array
+        a.a = [9,8,7,6]
+        self.assertEqual(a.a[0], 9)
+        self.assertEqual(a.a[1], 8)
+        self.assertEqual(a.a[2], 7)
+        self.assertEqual(a.a[3], 6)
+
+        # now try strings
+        a.a = ['3', '4', '5', '6']
+        self.assertEqual(a.a[0], 3)
+        self.assertEqual(a.a[1], 4)
+        self.assertEqual(a.a[2], 5)
+        self.assertEqual(a.a[3], 6)
+
+
 
 
