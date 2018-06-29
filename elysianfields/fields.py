@@ -268,6 +268,24 @@ class FloatField(Field):
     def pack(self):
         return struct.pack('<f', self._value)
 
+
+class Fixed16Field(FloatField):
+    def __init__(self, _value=0.0, **kwargs):
+        super(Fixed16Field, self).__init__(_value=_value, **kwargs)
+
+    def unpack(self, buffer):
+        value = struct.unpack_from('<i', buffer)[0]
+
+        self._value = value / 65536.0
+
+        return self
+
+    def pack(self):
+        value = int(self._value * 65536.0) 
+
+        return struct.pack('<i', value)
+
+
 class Ipv4Field(Uint32Field):
     def __init__(self, _value=0, **kwargs):
         super(Ipv4Field, self).__init__(_value=_value, **kwargs)

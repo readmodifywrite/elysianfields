@@ -185,6 +185,22 @@ class FieldTests(unittest.TestCase):
 
             self.assertEqual(b._value, a._value)   
 
+    def test_fixed16(self):
+        a = Fixed16Field()
+        self.assertEqual(a.size(), 4)
+
+        for val in [-30000.122985839844, 0, 30000.122985839844]:
+            a._value = val
+            self.assertEqual(a._value, val)
+
+            packed = a.pack()
+            self.assertEqual(len(packed), a.size())        
+
+            b = Fixed16Field().unpack(packed)
+
+            self.assertEqual(b._value, a._value)   
+
+
     def test_ipv4(self):
         a = Ipv4Field()
         self.assertEqual(a.size(), 4)
