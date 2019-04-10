@@ -370,7 +370,14 @@ class StringField(Field):
             self._length = len(s) + 1
 
         else:
-            s = struct.unpack_from('<' + str(self.size()) + 's', buf)[0].decode('ascii')
+            unpack_len = self.size()
+            # check if supplied buffer is less than our size.  this is fine, but we need to pad.
+            if len(buf) < unpack_len:
+                unpack_len = len(buf)
+
+            s = struct.unpack_from('<' + str(unpack_len) + 's', buf)[0].decode('ascii')
+            padding_len = self.size() - unpack_len
+            s += '\0' * padding_len
     
         self._value = ''.join([c for c in s if c in printable])
         
