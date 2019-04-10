@@ -391,6 +391,10 @@ class String64Field(StringField):
     def __init__(self, _value="", **kwargs):
         super(String64Field, self).__init__(_value=_value, _length=64, **kwargs)
 
+class String488Field(StringField):
+    def __init__(self, _value="", **kwargs):
+        super(String488Field, self).__init__(_value=_value, _length=488, **kwargs)
+
 class String512Field(StringField):
     def __init__(self, _value="", **kwargs):
         super(String512Field, self).__init__(_value=_value, _length=512, **kwargs)
