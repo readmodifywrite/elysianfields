@@ -9,7 +9,7 @@ try:
     from builtins import range
 
 except ImportError:
-    from __builtin__ import range
+    from builtins import range
 
 from string import printable
 from collections import OrderedDict
@@ -560,14 +560,14 @@ class StructField(Field):
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result
-        for k, v in self.__dict__.items():
+        for k, v in list(self.__dict__.items()):
             setattr(result, k, deepcopy(v, memo))
         return result
 
     def __str__(self):
         s = self._name + ":\n"
 
-        for field in self._fields.values():
+        for field in list(self._fields.values()):
             s += " " + field._name + " = " + str(field) + "\n"
 
         if len(self._fields) == 0:
@@ -592,13 +592,13 @@ class StructField(Field):
     def size(self):
         s = 0
 
-        for field in self._fields.values():
+        for field in list(self._fields.values()):
             s += field.size()
 
         return s
 
     def unpack(self, buffer):
-        for field in self._fields.values():
+        for field in list(self._fields.values()):
             field.unpack(buffer)
             buffer = buffer[field.size():]
 
@@ -607,7 +607,7 @@ class StructField(Field):
     def pack(self):
         s = b''
 
-        for field in self._fields.values():
+        for field in list(self._fields.values()):
             s += field.pack()
 
         return s
