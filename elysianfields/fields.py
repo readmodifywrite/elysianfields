@@ -471,8 +471,17 @@ class Mac48Field(StringField):
 
         s = ''
         for c in buffer:
-            s += '%02x:' % (ord(c))
+            try:
+                s += '%02x:' % (int(c))
 
+            except ValueError:
+                if ord(c) == 0:
+                    # check for null byte (field may be uninitialized)
+                    s += '00:'
+
+                else:
+                    raise
+                
         self._internal_value = s[:len(s)-1]
 
         return self

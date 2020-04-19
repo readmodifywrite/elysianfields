@@ -4,7 +4,7 @@ from setuptools import setup
 setup(
     name='elysianfields',
 
-    version='1.0.4',
+    version='1.0.5',
 
     packages=['elysianfields'],
 
