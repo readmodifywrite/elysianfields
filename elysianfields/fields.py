@@ -384,7 +384,7 @@ class StringField(Field):
         return self
 
     def pack(self):
-        return struct.pack('<' + str(self.size()) + 's', self._internal_value)
+        return struct.pack('<' + str(self.size()) + 's', bytes(self._internal_value))
 
 class String128Field(StringField):
     def __init__(self, _value="", **kwargs):
@@ -474,14 +474,10 @@ class Mac48Field(StringField):
             try:
                 s += '%02x:' % (int(c))
 
-            except ValueError:
-                if ord(c) == 0:
-                    # check for null byte (field may be uninitialized)
-                    s += '00:'
+            except ValueError:    
+                # bad byte (field may be uninitialized)
+                s += 'xx:'
 
-                else:
-                    raise
-                
         self._internal_value = s[:len(s)-1]
 
         return self
