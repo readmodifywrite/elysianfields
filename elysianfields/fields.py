@@ -384,7 +384,7 @@ class StringField(Field):
         return self
 
     def pack(self):
-        return struct.pack('<' + str(self.size()) + 's', bytes(self._internal_value))
+        return struct.pack('<' + str(self.size()) + 's', str(self._internal_value))
 
 class String128Field(StringField):
     def __init__(self, _value="", **kwargs):
