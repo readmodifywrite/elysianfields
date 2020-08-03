@@ -456,18 +456,17 @@ class Mac48Field(StringField):
     def size(self):
         return 6
 
-    def get_value(self):
-        return self._internal_value
+    # def get_value(self):
+    #     return self._internal_value
 
-    def set_value(self, value):
-        self._internal_value = value
+    # def set_value(self, value):
+    #     self._internal_value = value
 
-    _value = property(get_value, set_value)
+    # _value = property(get_value, set_value)
 
     def unpack(self, buffer):
         # slice and reverse buffer
         buffer = buffer[:self.size()]
-        #buffer = buffer[::-1]
 
         s = ''
         for c in buffer:
@@ -475,21 +474,19 @@ class Mac48Field(StringField):
                 s += '%02x:' % (int(c))
 
             except ValueError:    
+                raise
                 # bad byte (field may be uninitialized)
                 s += 'xx:'
 
-        self._internal_value = s[:len(s)-1]
+        self._value = s[:len(s)-1]
 
         return self
 
     def pack(self):
-        tokens = self._internal_value.split(':')
+        tokens = self._value.split(':')
 
-        s = ''
-        for token in tokens:
-            s += chr(int(token, 16))
-
-        #return s[::-1]
+        s = bytes([int(token, 16) for token in tokens])
+        
         return s
 
 
