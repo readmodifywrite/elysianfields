@@ -323,23 +323,22 @@ class StringField(Field):
         if _value == "":
             _value = "\0" * _length
 
-        super(StringField, self).__init__(_value=str(_value), **kwargs)
+        super(StringField, self).__init__(**kwargs)
+
+        self._value = str(_value)
 
     def __str__(self):
         return self._value
 
     def get_value(self):
-        try:
-            return self._internal_value.decode('ascii')
+        assert isinstance(self._internal_value, bytes)
 
-        except AttributeError:
-            return self._internal_value
+        return self._internal_value.decode('ascii')
 
     def set_value(self, data):
-        try:
-            self._internal_value = data.encode('ascii', errors='replace') # convert to ascii bytes, unicode will break
-        except UnicodeDecodeError:
-            self._internal_value = data
+        self._internal_value = data.encode('ascii', errors='replace') # convert to ascii bytes, unicode will break
+
+        assert isinstance(self._internal_value, bytes)
 
         if not self._fixed_length:
             self._length = len(self._internal_value)
