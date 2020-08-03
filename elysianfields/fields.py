@@ -456,14 +456,6 @@ class Mac48Field(StringField):
     def size(self):
         return 6
 
-    # def get_value(self):
-    #     return self._internal_value
-
-    # def set_value(self, value):
-    #     self._internal_value = value
-
-    # _value = property(get_value, set_value)
-
     def unpack(self, buffer):
         # slice and reverse buffer
         buffer = buffer[:self.size()]
