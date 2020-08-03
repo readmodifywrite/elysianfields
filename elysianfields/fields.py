@@ -408,6 +408,7 @@ class String512Field(StringField):
 class UuidField(StringField):
     def __init__(self, **kwargs):
         kwargs['_length'] = 16
+        kwargs['_value'] = '00000000000000000000000000000000'
 
         super(UuidField, self).__init__(**kwargs)
 
